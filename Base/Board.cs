@@ -58,6 +58,7 @@ namespace UnityChess {
 		}
 
 		public void SetStartingPosition() {
+			//I'm going to make changes here!
 			ClearBoard();
 
 			//Row 2/Rank 7 and Row 7/Rank 2, both rows of pawns
