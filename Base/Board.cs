@@ -26,7 +26,7 @@ namespace UnityChess {
 		}
 
 		/// <summary>Creates a Board with initial chess game position.</summary>
-		public Board() {
+		public Board(bool random) {
 			boardMatrix = new Piece[8, 8];
 			SetStartingPosition();
 		}

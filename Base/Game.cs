@@ -15,7 +15,7 @@ namespace UnityChess {
 		/// <summary>Creates a Game instance of a given mode with a standard starting Board.</summary>
 		/// <param name="mode">Describes which players are human or AI.</param>
 		/// <param name="startingConditions">Conditions at the time the board was set up.</param>
-		public Game(Mode mode, GameConditions startingConditions) {
+		public Game(Mode mode, GameConditions startingConditions, bool random) {
 			Mode = mode;
 			CurrentTurnSide = Side.White;
 			StartingConditions = startingConditions;
@@ -23,7 +23,7 @@ namespace UnityChess {
 			HalfMoveTimeline = new Timeline<HalfMove>();
 			enPassantCaptureSquareTimeline = new Timeline<Square>();
 			
-			BoardTimeline.AddNext(new Board());
+			BoardTimeline.AddNext(new Board(random));
 			enPassantCaptureSquareTimeline.AddNext(Square.Invalid);
 			UpdateAllPiecesLegalMoves(BoardTimeline.Current, enPassantCaptureSquareTimeline.Current, Side.White);
 		}
