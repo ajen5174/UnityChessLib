@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UnityChess {
 	/// <summary>An 8x8 column-major matrix representation of a chessboard.</summary>
@@ -69,12 +70,107 @@ namespace UnityChess {
 					this[position] = new Pawn(position, pawnColor);
 				}
 
+			//SetNormalFirstAndLastFile();
+			SetFischerFirstAndLastFile();
+		}
+
+		int GetRandomRangeExcluding(int min, int max, List<int> excludedNumbers)
+        {
+			int temp;
+			do
+			{
+				temp = UnityEngine.Random.Range(min, max);
+			} while (excludedNumbers.Contains(temp));
+			return temp;
+        }
+
+		void SetFischerFirstAndLastFile() {
+			List<int> occupiedSpaces = new List<int>();
+
+			int rook1 = UnityEngine.Random.Range(1, 9);
+			occupiedSpaces.Add(rook1);
+
+			int rook2 = GetRandomRangeExcluding(1, 9, occupiedSpaces);
+			occupiedSpaces.Add(rook2);
+			if (rook1 > rook2)
+			{
+				int temp = rook1;
+				rook1 = rook2;
+				rook2 = temp;
+			}
+
+			int king;
+			do
+			{
+				king = GetRandomRangeExcluding(1, 9, occupiedSpaces);
+			} while (!(rook1 < king && king < rook2));
+			occupiedSpaces.Add(king);
+
+			int bishop1 = GetRandomRangeExcluding(1, 9, occupiedSpaces);
+			occupiedSpaces.Add(bishop1);
+
+			int bishop2;
+			do
+			{
+				bishop2 = GetRandomRangeExcluding(1, 9, occupiedSpaces);
+
+			} while ((bishop1 % 2) == (bishop2 % 2));
+			occupiedSpaces.Add(bishop2);
+
+			int knight1 = GetRandomRangeExcluding(1, 9, occupiedSpaces);
+			occupiedSpaces.Add(knight1);
+			int knight2 = GetRandomRangeExcluding(1, 9, occupiedSpaces);
+			occupiedSpaces.Add(knight2);
+			int queen = GetRandomRangeExcluding(1, 9, occupiedSpaces);
+			occupiedSpaces.Add(queen);
+
 			//Rows 1 & 8/Ranks 8 & 1, back rows for both players
 			for (int file = 1; file <= 8; file++)
-				foreach (int rank in new[] {1, 8}) {
+				foreach (int rank in new[] { 1, 8 })
+				{
 					Square position = new Square(file, rank);
 					Side pieceColor = rank == 1 ? Side.White : Side.Black;
-					switch (file) {
+
+
+					if(file == rook1 || file == rook2)
+                    {
+						this[position] = new Rook(position, pieceColor);
+					}
+					else if(file == bishop1 || file == bishop2)
+                    {
+						this[position] = new Bishop(position, pieceColor);
+
+					}
+					else if(file == knight1 || file == knight2)
+                    {
+						this[position] = new Knight(position, pieceColor);
+
+					}
+					else if(file == king)
+                    {
+						this[position] = new King(position, pieceColor);
+						WhiteKing = (King)this[file, rank];
+						BlackKing = (King)this[file, rank];
+
+					}
+					else if(file == queen)
+                    {
+						this[position] = new Queen(position, pieceColor);
+
+					}
+				}
+
+		}
+
+		void SetNormalFirstAndLastFile() {
+			//Rows 1 & 8/Ranks 8 & 1, back rows for both players
+			for (int file = 1; file <= 8; file++)
+				foreach (int rank in new[] { 1, 8 })
+				{
+					Square position = new Square(file, rank);
+					Side pieceColor = rank == 1 ? Side.White : Side.Black;
+					switch (file)
+					{
 						case 1:
 						case 8:
 							this[position] = new Rook(position, pieceColor);
@@ -96,8 +192,8 @@ namespace UnityChess {
 					}
 				}
 
-			WhiteKing = (King) this[5, 1];
-			BlackKing = (King) this[5, 8];
+			WhiteKing = (King)this[5, 1];
+			BlackKing = (King)this[5, 8];
 		}
 
 		public void MovePiece(Movement move) {
